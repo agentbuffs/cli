@@ -4,7 +4,7 @@ All notable changes to this project are written here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The versions follow [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.5.0] - unreleased
 
 ### Changed
 
@@ -84,6 +84,7 @@ The versions follow [Semantic Versioning](https://semver.org/).
 - It checks the skill file against its SHA-256 before it writes it.
 - The options are `--client`, `--what`, `--yes`, `--dry-run`, `--api`, `--version` and `--help`. The exit codes are 0, 1, 2 and 130.
 
+[0.5.0]: https://github.com/agentbuffs/cli/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/agentbuffs/cli/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/agentbuffs/cli/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/agentbuffs/cli/compare/v0.3.1...v0.3.2
