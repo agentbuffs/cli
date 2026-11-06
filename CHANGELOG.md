@@ -4,6 +4,13 @@ All notable changes to this project are written here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- "Show the changes first" and `--dry-run` print the full text of the skill file, not only its size and checksum. The skill holds instructions your agent follows, so you can now read them before you approve.
+- The skill preview shows control characters and invisible characters, such as escape codes and zero-width marks, as `<U+XXXX>` codes. The file is still written exactly as downloaded.
+
 ## [0.4.1] - 2026-11-01
 
 ### Fixed

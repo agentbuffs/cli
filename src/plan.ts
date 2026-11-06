@@ -102,6 +102,28 @@ function planRun(action: RunAction, input: PlanInput): StepPlan {
   return { kind: 'run', action, commandPath };
 }
 
+/**
+ * Characters that act on the terminal or cannot be seen: control codes (an
+ * escape sequence or a carriage return can redraw the line and hide text),
+ * format and bidi marks, zero-width characters, variation selectors and tag
+ * characters. The preview shows each one as `<U+XXXX>` so what the user reads
+ * is what the agent will read.
+ */
+const UNSAFE_TO_SHOW = /[\u0000-\u0008\u000b-\u001f\u007f-\u009f\u00ad\u034f\u061c\u115f\u1160\u17b4\u17b5\u180b-\u180f\u200b-\u200f\u2028-\u202e\u2060-\u206f\u3164\ufe00-\ufe0f\ufeff\uffa0\u{e0000}-\u{e0fff}]/gu;
+
+function showable(line: string): string {
+  const spaced = line.replaceAll('\t', '    ');
+  return spaced.replace(UNSAFE_TO_SHOW, (char) => `<U+${(char.codePointAt(0) ?? 0).toString(16).toUpperCase().padStart(4, '0')}>`);
+}
+
+/** The whole skill text as preview lines, in order, blank lines kept, nothing left out. */
+function skillPreviewLines(text: string): string[] {
+  const lines = text.split(/\r\n|\n|\r/);
+  // A final newline ends the last line; it does not start an empty one.
+  if (lines.at(-1) === '') lines.pop();
+  return lines.map(showable);
+}
+
 function planSkillFile(action: FileAction, input: PlanInput): StepPlan {
   const skill = input.doc.skill;
   if (skill === null || input.skillText === null) return { kind: 'not-offered' };
@@ -111,7 +133,8 @@ function planSkillFile(action: FileAction, input: PlanInput): StepPlan {
   if (original === input.skillText.text) return { kind: 'already', file };
   const change: WriteChange = original === null ? 'create' : 'replace';
   const kilobytes = (Buffer.byteLength(input.skillText.text) / 1024).toFixed(1);
-  const preview = [`the ${skill.name} skill, ${kilobytes} KB, sha256 ${skill.sha256.slice(0, 12)}`];
+  const summary = `the ${skill.name} skill, ${kilobytes} KB, sha256 ${skill.sha256.slice(0, 12)}`;
+  const preview = [summary, ...skillPreviewLines(input.skillText.text)];
   return { kind: 'write', file, original, text: input.skillText.text, change, preview };
 }
 

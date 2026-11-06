@@ -166,7 +166,7 @@ export function detailLines(opts: { steps: readonly Step[]; ctx: RunContext; pai
     opts.paint.bold(harness.name),
     ...list.flatMap((step) => {
       const [first = '', ...rest] = detailOf(step.plan, opts.ctx, opts.command);
-      return [...wrap(`  ${label(step.part)}${first}`), ...rest.flatMap((line) => wrap(`${' '.repeat(indent)}${line}`)).map(opts.paint.dim)];
+      return [...wrap(`  ${label(step.part)}${first}`), ...rest.flatMap((line) => (line === '' ? [''] : wrap(`${' '.repeat(indent)}${line}`))).map(opts.paint.dim)];
     }),
   ]);
 }

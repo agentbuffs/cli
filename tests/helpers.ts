@@ -194,7 +194,7 @@ export type Answers = {
 };
 
 /** A prompter that answers from a script and records each question. */
-export function scriptedPrompter(answers: Answers): Prompter & { asked: string[] } {
+export function scriptedPrompter(answers: Answers, onAsk: () => void = () => undefined): Prompter & { asked: string[] } {
   const asked: string[] = [];
   const confirms = [...(answers.confirms ?? [])];
   const plan = [...(answers.plan ?? [])];
@@ -212,6 +212,7 @@ export function scriptedPrompter(answers: Answers): Prompter & { asked: string[]
     },
     async choosePlanAction({ details }) {
       asked.push(`plan details=${details !== null}`);
+      onAsk();
       const answer = plan.shift();
       if (answer === undefined) throw new Error('Unexpected plan question');
       if (answer === 'ctrl-c') throw new CancelledError('cancelled');
@@ -236,10 +237,12 @@ export async function runCli(opts: {
   interactive?: boolean;
   answers?: Answers;
   exec?: ExecFn;
+  /** Called each time the plan question is asked, to look at the world at that moment. */
+  onPlanQuestion?: () => void;
 }): Promise<RunOutcome> {
   const out: string[] = [];
   const err: string[] = [];
-  const prompter = scriptedPrompter(opts.answers ?? {});
+  const prompter = scriptedPrompter(opts.answers ?? {}, opts.onPlanQuestion);
   const io: CliIo = {
     argv: opts.argv,
     out: (text) => out.push(text),

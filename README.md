@@ -148,6 +148,10 @@ it performs one of these actions:
   for example `~/.claude/skills/find-agent-tools/SKILL.md`.
 - Prints instructions for applications that require manual setup.
 
+Install pins the MCP server URL, not the tools behind it. "Show the changes
+first" and `--dry-run` print the full skill text, so you can read the
+instructions your agent will follow before anything is written.
+
 Before modifying a file, the tool creates a `<file>.bak` copy and prints the
 path at the end. It writes updates to a temporary file before replacing the
 target. It skips unparseable files and files that already contain the target
